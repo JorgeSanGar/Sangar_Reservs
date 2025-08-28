@@ -291,6 +291,79 @@ export const bookingService = {
     });
     
     return { data, error };
+  },
+
+  async checkResourceAvailability(resourceId, startTime, endTime) {
+    // Esta consulta aprovechará el índice GiST compuesto optimizado
+    // Utiliza el índice idx_booking_resources_gist (resource_id, timespan)
+    const { data, error } = await supabase
+      .from('booking_resources')
+      .select(`
+        booking_id, 
+        timespan,
+        bookings (
+          id,
+          customer_name,
+          start_time,
+          end_time,
+          status
+        )
+      `)
+      .eq('resource_id', resourceId)
+      .overlaps('timespan', `[${startTime.toISOString()},${endTime.toISOString()})`);
+    
+    return { data, error };
+  },
+
+  async getResourceUtilization(orgId, startDate, endDate) {
+    // Consulta optimizada que aprovecha índices GiST para rangos temporales
+    const { data, error } = await supabase
+      .from('booking_resources')
+      .select(`
+        resource_id,
+        timespan,
+        resources (
+          id,
+          name,
+          type,
+          org_id
+        ),
+        bookings (
+          id,
+          customer_name,
+          status,
+          start_time,
+          end_time,
+          services (
+            id,
+            name
+          )
+        )
+      `)
+      .eq('resources.org_id', orgId)
+      .overlaps('timespan', `[${startDate.toISOString()},${endDate.toISOString()}]`);
+    
+    return { data, error };
+  },
+
+  async checkMultipleResourcesAvailability(resourceIds, startTime, endTime) {
+    // Consulta optimizada para verificar disponibilidad de múltiples recursos
+    // Aprovecha el índice GiST para cada resource_id
+    const { data, error } = await supabase
+      .from('booking_resources')
+      .select(`
+        resource_id,
+        booking_id,
+        timespan,
+        bookings (
+          customer_name,
+          status
+        )
+      `)
+      .in('resource_id', resourceIds)
+      .overlaps('timespan', `[${startTime.toISOString()},${endTime.toISOString()})`);
+    
+    return { data, error };
   }
 };
 
