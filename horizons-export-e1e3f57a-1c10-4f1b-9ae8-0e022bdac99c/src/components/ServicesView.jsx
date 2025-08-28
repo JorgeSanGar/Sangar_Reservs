@@ -42,9 +42,11 @@ const ServicesView = ({ user, shopData, onUpdateShop }) => {
       <span className={`status-badge status-${value.replace(' ', '_')}`}>{value}</span>
     )},
     { accessor: 'actions', Header: 'Acciones', Cell: ({ row }) => (
-      <Button variant="outline" size="sm" onClick={() => toast({ title: "Próximamente", description: "La edición de reservas estará disponible pronto." })}>
-        Ver/Editar
-      </Button>
+      <div>
+        <Button variant="outline" size="sm" onClick={() => toast({ title: "Próximamente", description: "La edición de reservas estará disponible pronto." })}>
+          Ver/Editar
+        </Button>
+      </div>
     )}
   ];
 
