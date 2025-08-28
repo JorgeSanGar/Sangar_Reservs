@@ -478,6 +478,35 @@ export const inviteService = {
   }
 };
 
+// ==================== ARRIVAL RECOMMENDATIONS ====================
+export const arrivalService = {
+  async getArrivalRecommendation(bookingId, mode = null) {
+    const { data, error } = await supabase.rpc('recommend_arrival', {
+      p_booking: bookingId,
+      p_mode: mode
+    });
+    
+    return { data, error };
+  },
+
+  formatArrivalMessage(recommendation) {
+    if (!recommendation || recommendation.status !== 'ok') {
+      return 'No se pudo calcular la recomendación de llegada';
+    }
+
+    const start = new Date(recommendation.recommended_start);
+    const end = new Date(recommendation.recommended_end);
+    const startTime = start.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+    const endTime = end.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+
+    if (recommendation.mode === 'wait') {
+      return `Para no hacerte esperar, llega entre ${startTime} y ${endTime}. Te atenderemos nada más terminar el vehículo anterior.`;
+    } else {
+      return `Puedes dejar el coche entre ${startTime} y ${endTime}. Lo tendremos listo para tu franja reservada.`;
+    }
+  }
+};
+
 // ==================== UTILITY FUNCTIONS ====================
 export const utilService = {
   async handleSupabaseError(error) {

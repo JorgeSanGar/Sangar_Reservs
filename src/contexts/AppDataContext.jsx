@@ -232,11 +232,16 @@ export const AppDataProvider = ({ children }) => {
   const createBooking = async (serviceId, startTime, customerData, payload = null) => {
     if (!orgData) return { error: 'No organization selected' };
     
+    const bookingData = {
+      ...customerData,
+      visit_mode: customerData.visitMode || 'wait'
+    };
+    
     const { data, error } = await bookingService.createBooking(
       orgData.id,
       serviceId,
       startTime,
-      customerData,
+      bookingData,
       payload
     );
     
