@@ -1,4 +1,3 @@
-// app/(booking)/ConfigureWheelsSheet.tsx
 import * as React from "react";
 import { useEffect, useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
@@ -12,8 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
-// Si NO tienes ResponsiveSheet, usa Sheet de shadcn:
-// import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 
 // ───────────────────────────────────────────────────────────────────────────────
 // 1) Esquema & Tipos
@@ -169,27 +167,13 @@ export default function ConfigureWheelsSheet({
   // ─────────────────────────────────────────────────────────────────────────────
   // UI
   // ─────────────────────────────────────────────────────────────────────────────
-
-  // Si NO tienes ResponsiveSheet, descomenta Sheet:
-  // return (
-  //   <Sheet open={isOpen} onOpenChange={open => !open && onClose()}>
-  //     <SheetContent side="bottom" className="max-w-lg mx-auto w-full">
-  //       <SheetHeader>
-  //         <SheetTitle>Configurar Ruedas</SheetTitle>
-  //         <SheetDescription>{serviceName}</SheetDescription>
-  //       </SheetHeader>
-  //       {/* …contenido idéntico al de abajo (solo cambia el wrapper) */}
-  //     </SheetContent>
-  //   </Sheet>
-  // );
-
   return (
-    <ResponsiveSheet
-      open={isOpen}
-      onOpenChange={onClose}
-      title="Configurar Ruedas"
-      description={serviceName}
-    >
+    <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <SheetContent side="bottom" className="max-w-lg mx-auto w-full">
+        <SheetHeader>
+          <SheetTitle>Configurar Ruedas</SheetTitle>
+          <SheetDescription>{serviceName}</SheetDescription>
+        </SheetHeader>
       <div className="flex flex-col h-full">
         {/* FORM */}
         <form
@@ -365,6 +349,7 @@ export default function ConfigureWheelsSheet({
           </div>
         </footer>
       </div>
-    </ResponsiveSheet>
+      </SheetContent>
+    </Sheet>
   );
 }
