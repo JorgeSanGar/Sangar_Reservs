@@ -1,3 +1,9 @@
+import React from 'react';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import SideNav from '@/components/layout/SideNav';
+import AppNavbar from '@/components/layout/AppNavbar';
+import BottomTabs from '@/components/layout/BottomTabs';
+
 const ResponsiveLayout = ({ children, user, shopName, userRole, onLogout, navItems, activeTab, onTabChange }) => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const [isSideNavOpen, setIsSideNavOpen] = React.useState(false);
@@ -35,3 +41,5 @@ const ResponsiveLayout = ({ children, user, shopName, userRole, onLogout, navIte
     </div>
   );
 };
+
+export default ResponsiveLayout;
