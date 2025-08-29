@@ -37,18 +37,6 @@ const formSchema = z.object({
  * @property {Partial<FormValues>} [defaultValues]
  * @property {(payload: { values: FormValues; estimateMinutes: number; breakdown: string[]; }) => void} [onSubmitSuccess]
  */
-const Props = {
-  isOpen: boolean;
-  onClose: () => void;
-  serviceName?: string;          // ej: "Cambio de neumáticos"
-  vehicleType?: VehicleType;     // "car" por defecto
-  defaultValues?: Partial<FormValues>;
-  onSubmitSuccess?: (payload: {
-    values: FormValues;
-    estimateMinutes: number;
-    breakdown: string[];
-  }) => void;
-};
 
 // ───────────────────────────────────────────────────────────────────────────────
 // 2) Reglas de taller (de tu tabla guardada en memoria)
