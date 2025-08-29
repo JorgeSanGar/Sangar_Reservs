@@ -16,7 +16,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "
 // ───────────────────────────────────────────────────────────────────────────────
 // 1) Esquema & Tipos
 // ───────────────────────────────────────────────────────────────────────────────
-/** @typedef {"car" | "suv"} VehicleType */
+/** @typedef {"car" | "suv"} VehicleType */ // puedes ampliar: "truck", "industrial", "moto"
 
 const formSchema = z.object({
   pinchazo: z.boolean().default(false),                 // si es pinchazo reemplaza "cambio"
@@ -26,7 +26,7 @@ const formSchema = z.object({
   alineado: z.boolean().default(false),                 // alineado eje/dirección
 });
 
-/** @typedef {z.infer<typeof formSchema>} FormValues */
+/** @typedef {z.infer<typeof formSchema>} FormValues */ // Tipo inferido de Zod
 
 /**
  * @typedef {Object} Props
@@ -34,7 +34,7 @@ const formSchema = z.object({
  * @property {() => void} onClose
  * @property {string} [serviceName]
  * @property {VehicleType} [vehicleType]
- * @property {Partial<FormValues>} [defaultValues]
+ * @property {Partial<FormValues>} [defaultValues] // Valores por defecto para el formulario
  * @property {(payload: { values: FormValues; estimateMinutes: number; breakdown: string[]; }) => void} [onSubmitSuccess]
  */
 
@@ -51,13 +51,13 @@ const RULES = {
   },
   suv: {
     change: { 1: 25, 2: 50, 4: 90 },
-    puncture: 30,
+    puncture: 30, // minutos
     balanceByWheels: { 1: 12, 2: 20, 4: 30 },
     alignment: 25,
   },
-} as const;
+};
 
-function clampEquilibradoCount(wheels: 1|2|4, v?: number) {
+function clampEquilibradoCount(wheels, v) {
   const allowed = [1,2,4].slice(0, [1,2,4].indexOf(wheels)+1); // simplificado
   // garantizamos que equilibradoCount ∈ {1,2,4} y ≤ wheels
   const candidate = [1,2,4].filter(n => n <= wheels);
@@ -66,9 +66,9 @@ function clampEquilibradoCount(wheels: 1|2|4, v?: number) {
 }
 
 function computeEstimate(
-  vehicleType: VehicleType,
-  v: FormValues
-): { minutes: number; breakdown: string[] } {
+  vehicleType, //: VehicleType,
+  v //: FormValues
+) { //: { minutes: number; breakdown: string[] } {
   const rules = RULES[vehicleType ?? "car"];
   const bd: string[] = [];
 
@@ -76,16 +76,16 @@ function computeEstimate(
 
   if (v.pinchazo) {
     total += rules.puncture;
-    bd.push(`Pinchazo: ${rules.puncture}′`);
+    bd.push(`Pinchazo: ${rules.puncture}′`); // Minutos
   } else {
-    const base = rules.change[v.wheels as 1|2|4];
+    const base = rules.change[v.wheels]; // as 1|2|4];
     total += base;
     bd.push(`Cambio (${v.wheels} rueda${v.wheels>1 ? "s":""}): ${base}′`);
   }
 
   if (v.equilibrado) {
-    const eqCount = clampEquilibradoCount(v.wheels as 1|2|4, v.equilibradoCount);
-    const extra = rules.balanceByWheels[eqCount as 1|2|4];
+    const eqCount = clampEquilibradoCount(v.wheels, v.equilibradoCount); // as 1|2|4, v.equilibradoCount);
+    const extra = rules.balanceByWheels[eqCount]; // as 1|2|4];
     total += extra;
     bd.push(`Equilibrado (${eqCount}): +${extra}′`);
   }
@@ -95,10 +95,10 @@ function computeEstimate(
     bd.push(`Alineación: +${rules.alignment}′`);
   }
 
-  return { minutes: total, breakdown: bd };
+  return { minutes: total, breakdown: bd }; // Retorna el tiempo total y el desglose
 }
 
-// ───────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────── //
 // 3) UI Helpers
 // ───────────────────────────────────────────────────────────────────────────────
 function Section({ title, subtitle, children }: React.PropsWithChildren<{title:string; subtitle?:string;}>) {
@@ -114,14 +114,14 @@ function Section({ title, subtitle, children }: React.PropsWithChildren<{title:s
 }
 
 export default function ConfigureWheelsSheet({
-  isOpen,
-  onClose,
-  serviceName = "Cambio de neumáticos",
-  vehicleType = "car",
-  defaultValues,
-  onSubmitSuccess,
-}: Props) {
-
+  isOpen, //: boolean,
+  onClose, //: () => void,
+  serviceName = "Cambio de neumáticos", //: string,
+  vehicleType = "car", //: VehicleType,
+  defaultValues, //: Partial<FormValues>,
+  onSubmitSuccess, //: (payload: { values: FormValues; estimateMinutes: number; breakdown: string[]; }) => void,
+}) { //: Props) {
+  // @ts-ignore
   const {
     control, handleSubmit, watch, setValue, formState: { errors, isValid, isSubmitting }
   } = useForm<FormValues>({
@@ -138,14 +138,14 @@ export default function ConfigureWheelsSheet({
   });
 
   // Cálculo en vivo (debounce ligero si quisieras)
-  const values = watch();
+  const values = watch(); // as FormValues;
   const { minutes, breakdown } = useMemo(
-    () => computeEstimate(vehicleType, values as FormValues),
+    () => computeEstimate(vehicleType, values), // as FormValues),
     [vehicleType, values]
   );
 
   // Ajuste UX: si se marca "pinchazo", bloqueamos nº ruedas del cambio
-  const isPuncture = values.pinchazo;
+  const isPuncture = values.pinchazo; // boolean
   useEffect(() => {
     if (isPuncture) {
       // Para evitar inconsistencias visuales con slider
@@ -155,7 +155,7 @@ export default function ConfigureWheelsSheet({
   }, [isPuncture, setValue]);
 
   // Submit
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = (data) => { //: FormValues) => {
     const result = computeEstimate(vehicleType, data);
     onSubmitSuccess?.({ values: data, estimateMinutes: result.minutes, breakdown: result.breakdown });
     onClose();
@@ -218,8 +218,8 @@ export default function ConfigureWheelsSheet({
                         // Snap a 1,2,4
                         const snap = field.value <= 1 ? 1 : field.value <= 2 ? 2 : 4;
                         field.onChange(snap);
-                        // Ajusta equilibradoCount para no superar wheels
-                        setValue("equilibradoCount", clampEquilibradoCount(snap as 1|2|4, values.equilibradoCount), { shouldValidate: true });
+                        // Ajusta equilibradoCount para no superar wheels // as 1|2|4, values.equilibradoCount), { shouldValidate: true });
+                        setValue("equilibradoCount", clampEquilibradoCount(snap, values.equilibradoCount), { shouldValidate: true });
                       }}
                     />
                     <p className="text-xs text-gray-500">Valores válidos: 1, 2 o 4. Se aplica la tabla de tiempos (no suma lineal).</p>
@@ -246,7 +246,7 @@ export default function ConfigureWheelsSheet({
                       <Switch id="equilibrado" checked={field.value} onCheckedChange={(v) => {
                         field.onChange(v);
                         if (v) {
-                          const snap = clampEquilibradoCount((values.wheels as 1|2|4), values.equilibradoCount);
+                          const snap = clampEquilibradoCount(values.wheels, values.equilibradoCount); // as 1|2|4), values.equilibradoCount);
                           setValue("equilibradoCount", snap, { shouldValidate: true });
                         }
                       }} />
@@ -260,10 +260,10 @@ export default function ConfigureWheelsSheet({
                             type="number"
                             inputMode="numeric"
                             className="h-8 w-16"
-                            min={1}
-                            max={values.wheels}
+                            min={1} // min 1
+                            max={values.wheels} // max wheels
                             step={1}
-                            value={clampEquilibradoCount(values.wheels as 1|2|4, values.equilibradoCount)}
+                            value={clampEquilibradoCount(values.wheels, values.equilibradoCount)} // as 1|2|4, values.equilibradoCount)}
                             onChange={(e) => {
                               const raw = Number(e.target.value || 0);
                               // “Snap” a 1,2,4 sin sobrepasar wheels
