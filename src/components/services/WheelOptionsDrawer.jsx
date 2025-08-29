@@ -26,9 +26,18 @@ const formSchema = z.object({
   alineado: z.boolean().default(false),                 // alineado eje/dirección
 });
 
-type FormValues = z.infer<typeof formSchema>;
+/** @typedef {z.infer<typeof formSchema>} FormValues */
 
-type Props = {
+/**
+ * @typedef {Object} Props
+ * @property {boolean} isOpen
+ * @property {() => void} onClose
+ * @property {string} [serviceName]
+ * @property {VehicleType} [vehicleType]
+ * @property {Partial<FormValues>} [defaultValues]
+ * @property {(payload: { values: FormValues; estimateMinutes: number; breakdown: string[]; }) => void} [onSubmitSuccess]
+ */
+const Props = {
   isOpen: boolean;
   onClose: () => void;
   serviceName?: string;          // ej: "Cambio de neumáticos"
