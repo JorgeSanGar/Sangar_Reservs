@@ -62,7 +62,7 @@ function clampEquilibradoCount(wheels, v) {
   // garantizamos que equilibradoCount ∈ {1,2,4} y ≤ wheels
   const candidate = [1,2,4].filter(n => n <= wheels);
   const fallback = candidate[candidate.length - 1] ?? wheels;
-  return candidate.includes(v as number) ? (v as number) : fallback;
+  return candidate.includes(v) ? v : fallback;
 }
 
 function computeEstimate(
