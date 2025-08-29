@@ -1,5 +1,10 @@
+import React, { useState, useMemo, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { useToast } from '@/components/ui/use-toast';
 import { ArrowRight, Clock } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { computeFreeIntervals } from '@/lib/availability';
 import { arrivalService, estimationService } from '@/lib/supabaseService';
 import { useAppData } from '@/contexts/AppDataContext';
@@ -19,7 +24,6 @@ const NewBookingWizard = ({ isOpen, onClose, initialDate = null }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [arrivalRecommendation, setArrivalRecommendation] = useState(null);
   const [selectedDate, setSelectedDate] = useState(initialDate || new Date());
-  const [estimatedDuration, setEstimatedDuration] = useState(null);
   const [bookingTime, setBookingTime] = useState(null);
   const [wheelConfig, setWheelConfig] = useState(null);
    
