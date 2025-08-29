@@ -1,5 +1,6 @@
 @@ .. @@
 -const SideNav = ({ navItems, activeTab, onTabChange, user, shopName, onLogout }) => {
+}
 +const SideNav = ({ navItems, activeTab, onTabChange, user, shopName, userRole, onLogout }) => {
    return (
      <aside className="fixed top-0 left-0 h-full w-64 bg-white border-r border-gray-200 flex flex-col z-40">
@@ -17,3 +18,5 @@
            </div>
          </div>
        </div>
+   )
+}
