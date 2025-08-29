@@ -70,22 +70,22 @@ function computeEstimate(
   v //: FormValues
 ) { //: { minutes: number; breakdown: string[] } {
   const rules = RULES[vehicleType ?? "car"];
-  const bd: string[] = [];
+  const bd = [];
 
   let total = 0;
 
   if (v.pinchazo) {
     total += rules.puncture;
-    bd.push(`Pinchazo: ${rules.puncture}′`); // Minutos
+    bd.push(`Pinchazo: ${rules.puncture}′`);
   } else {
-    const base = rules.change[v.wheels]; // as 1|2|4];
+    const base = rules.change[v.wheels];
     total += base;
     bd.push(`Cambio (${v.wheels} rueda${v.wheels>1 ? "s":""}): ${base}′`);
   }
 
   if (v.equilibrado) {
-    const eqCount = clampEquilibradoCount(v.wheels, v.equilibradoCount); // as 1|2|4, v.equilibradoCount);
-    const extra = rules.balanceByWheels[eqCount]; // as 1|2|4];
+    const eqCount = clampEquilibradoCount(v.wheels, v.equilibradoCount);
+    const extra = rules.balanceByWheels[eqCount];
     total += extra;
     bd.push(`Equilibrado (${eqCount}): +${extra}′`);
   }
@@ -101,7 +101,7 @@ function computeEstimate(
 // ─────────────────────────────────────────────────────────────────────────────── //
 // 3) UI Helpers
 // ───────────────────────────────────────────────────────────────────────────────
-function Section({ title, subtitle, children }: React.PropsWithChildren<{title:string; subtitle?:string;}>) {
+function Section({ title, subtitle, children }) {
   return (
     <section className="rounded-2xl border bg-white/60 backdrop-blur p-4 md:p-5">
       <header className="mb-3">
@@ -124,7 +124,7 @@ export default function ConfigureWheelsSheet({
   // @ts-ignore
   const {
     control, handleSubmit, watch, setValue, formState: { errors, isValid, isSubmitting }
-  } = useForm<FormValues>({
+  } = useForm({
     resolver: zodResolver(formSchema),
     mode: "onChange",
     defaultValues: {
@@ -138,14 +138,14 @@ export default function ConfigureWheelsSheet({
   });
 
   // Cálculo en vivo (debounce ligero si quisieras)
-  const values = watch(); // as FormValues;
+  const values = watch();
   const { minutes, breakdown } = useMemo(
-    () => computeEstimate(vehicleType, values), // as FormValues),
+    () => computeEstimate(vehicleType, values),
     [vehicleType, values]
   );
 
   // Ajuste UX: si se marca "pinchazo", bloqueamos nº ruedas del cambio
-  const isPuncture = values.pinchazo; // boolean
+  const isPuncture = values.pinchazo;
   useEffect(() => {
     if (isPuncture) {
       // Para evitar inconsistencias visuales con slider
@@ -155,7 +155,7 @@ export default function ConfigureWheelsSheet({
   }, [isPuncture, setValue]);
 
   // Submit
-  const onSubmit = (data) => { //: FormValues) => {
+  const onSubmit = (data) => {
     const result = computeEstimate(vehicleType, data);
     onSubmitSuccess?.({ values: data, estimateMinutes: result.minutes, breakdown: result.breakdown });
     onClose();
@@ -218,7 +218,7 @@ export default function ConfigureWheelsSheet({
                         // Snap a 1,2,4
                         const snap = field.value <= 1 ? 1 : field.value <= 2 ? 2 : 4;
                         field.onChange(snap);
-                        // Ajusta equilibradoCount para no superar wheels // as 1|2|4, values.equilibradoCount), { shouldValidate: true });
+                        // Ajusta equilibradoCount para no superar wheels
                         setValue("equilibradoCount", clampEquilibradoCount(snap, values.equilibradoCount), { shouldValidate: true });
                       }}
                     />
