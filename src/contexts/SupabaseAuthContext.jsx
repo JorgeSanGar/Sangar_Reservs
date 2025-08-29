@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react';
-
 import { supabase } from '@/lib/customSupabaseClient';
+import { authService, utilService } from '@/lib/supabaseService';
 import { useToast } from '@/components/ui/use-toast';
 
 const AuthContext = createContext(undefined);
@@ -14,7 +14,33 @@ export const AuthProvider = ({ children }) => {
 
   const handleSession = useCallback(async (session) => {
     setSession(session);
-    setUser(session?.user ?? null);
+    
+    if (session?.user) {
+      // Sync user data with our users table
+      try {
+        const { data: userData, error } = await supabase
+          .from('users')
+          .upsert({
+            id: session.user.id,
+            email: session.user.email,
+            raw_user_meta_data: session.user.user_metadata
+          })
+          .select()
+          .single();
+        
+        if (error) {
+          console.error('Error syncing user data:', error);
+        }
+        
+        setUser(userData || session.user);
+      } catch (error) {
+        console.error('Error in user sync:', error);
+        setUser(session.user);
+      }
+    } else {
+      setUser(null);
+    }
+    
     setLoading(false);
   }, []);
 
@@ -35,49 +61,47 @@ export const AuthProvider = ({ children }) => {
     return () => subscription.unsubscribe();
   }, [handleSession]);
 
-  const signUp = useCallback(async (email, password, options) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options,
-    });
+  const signUp = useCallback(async (email, password, options = {}) => {
+    const { data, error } = await authService.signUp(email, password, options);
 
     if (error) {
       toast({
         variant: "destructive",
-        title: "Sign up Failed",
-        description: error.message || "Something went wrong",
+        title: "Error de Registro",
+        description: await utilService.handleSupabaseError(error),
+      });
+    } else {
+      toast({
+        title: "Registro Exitoso",
+        description: "Revisa tu correo para confirmar tu cuenta.",
       });
     }
 
-    return { error };
+    return { data, error };
   }, [toast]);
 
   const signIn = useCallback(async (email, password) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { data, error } = await authService.signIn(email, password);
 
     if (error) {
       toast({
         variant: "destructive",
-        title: "Sign in Failed",
-        description: error.message || "Something went wrong",
+        title: "Error de Inicio de Sesión",
+        description: await utilService.handleSupabaseError(error),
       });
     }
 
-    return { error };
+    return { data, error };
   }, [toast]);
 
   const signOut = useCallback(async () => {
-    const { error } = await supabase.auth.signOut();
+    const { error } = await authService.signOut();
 
     if (error) {
       toast({
         variant: "destructive",
-        title: "Sign out Failed",
-        description: error.message || "Something went wrong",
+        title: "Error al Cerrar Sesión",
+        description: await utilService.handleSupabaseError(error),
       });
     }
 

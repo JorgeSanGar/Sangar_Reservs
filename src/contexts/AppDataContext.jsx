@@ -169,6 +169,16 @@ export const AppDataProvider = ({ children }) => {
     
     if (!error && data) {
       setServices(prev => [...prev, data]);
+      toast({
+        title: "Servicio creado",
+        description: `${data.name} ha sido añadido exitosamente.`
+      });
+    } else if (error) {
+      toast({
+        title: "Error",
+        description: await utilService.handleSupabaseError(error),
+        variant: "destructive"
+      });
     }
     
     return { data, error };
@@ -179,6 +189,16 @@ export const AppDataProvider = ({ children }) => {
     
     if (!error && data) {
       setServices(prev => prev.map(s => s.id === serviceId ? data : s));
+      toast({
+        title: "Servicio actualizado",
+        description: "Los cambios han sido guardados."
+      });
+    } else if (error) {
+      toast({
+        title: "Error",
+        description: await utilService.handleSupabaseError(error),
+        variant: "destructive"
+      });
     }
     
     return { data, error };
@@ -189,6 +209,16 @@ export const AppDataProvider = ({ children }) => {
     
     if (!error) {
       setServices(prev => prev.filter(s => s.id !== serviceId));
+      toast({
+        title: "Servicio eliminado",
+        description: "El servicio ha sido eliminado exitosamente."
+      });
+    } else {
+      toast({
+        title: "Error",
+        description: await utilService.handleSupabaseError(error),
+        variant: "destructive"
+      });
     }
     
     return { error };
@@ -204,6 +234,16 @@ export const AppDataProvider = ({ children }) => {
     
     if (!error && data) {
       setResources(prev => [...prev, data]);
+      toast({
+        title: "Recurso creado",
+        description: `${data.name} ha sido añadido exitosamente.`
+      });
+    } else if (error) {
+      toast({
+        title: "Error",
+        description: await utilService.handleSupabaseError(error),
+        variant: "destructive"
+      });
     }
     
     return { data, error };
@@ -214,6 +254,16 @@ export const AppDataProvider = ({ children }) => {
     
     if (!error && data) {
       setResources(prev => prev.map(r => r.id === resourceId ? data : r));
+      toast({
+        title: "Recurso actualizado",
+        description: "Los cambios han sido guardados."
+      });
+    } else if (error) {
+      toast({
+        title: "Error",
+        description: await utilService.handleSupabaseError(error),
+        variant: "destructive"
+      });
     }
     
     return { data, error };
@@ -224,6 +274,16 @@ export const AppDataProvider = ({ children }) => {
     
     if (!error) {
       setResources(prev => prev.filter(r => r.id !== resourceId));
+      toast({
+        title: "Recurso eliminado",
+        description: "El recurso ha sido eliminado exitosamente."
+      });
+    } else {
+      toast({
+        title: "Error",
+        description: await utilService.handleSupabaseError(error),
+        variant: "destructive"
+      });
     }
     
     return { error };
@@ -233,7 +293,9 @@ export const AppDataProvider = ({ children }) => {
     if (!orgData) return { error: 'No organization selected' };
     
     const bookingData = {
-      ...customerData,
+      name: customerData.name,
+      email: customerData.email || '',
+      phone: customerData.phone || '',
       visit_mode: customerData.visitMode || 'wait'
     };
     
@@ -248,6 +310,16 @@ export const AppDataProvider = ({ children }) => {
     if (!error) {
       // Reload bookings to get the complete data
       await loadBookings(orgData.id);
+      toast({
+        title: "Reserva creada",
+        description: "La reserva ha sido creada exitosamente."
+      });
+    } else {
+      toast({
+        title: "Error",
+        description: await utilService.handleSupabaseError(error),
+        variant: "destructive"
+      });
     }
     
     return { data, error };
@@ -265,6 +337,16 @@ export const AppDataProvider = ({ children }) => {
     if (!error) {
       // Reload bookings to get the updated data
       await loadBookings(orgData.id);
+      toast({
+        title: "Reserva actualizada",
+        description: "Los cambios han sido guardados."
+      });
+    } else {
+      toast({
+        title: "Error",
+        description: await utilService.handleSupabaseError(error),
+        variant: "destructive"
+      });
     }
     
     return { data, error };
@@ -275,6 +357,16 @@ export const AppDataProvider = ({ children }) => {
     
     if (!error) {
       setBookings(prev => prev.filter(b => b.id !== bookingId));
+      toast({
+        title: "Reserva cancelada",
+        description: "La reserva ha sido cancelada exitosamente."
+      });
+    } else {
+      toast({
+        title: "Error",
+        description: await utilService.handleSupabaseError(error),
+        variant: "destructive"
+      });
     }
     
     return { data, error };
@@ -303,11 +395,22 @@ export const AppDataProvider = ({ children }) => {
     const { data, error } = await workingHoursService.setWorkingHours(
       orgData.id,
       new Date().toISOString().split('T')[0], // effective_from: today
+      null, // effective_to
       items
     );
     
     if (!error) {
       setWorkingHours(workingHoursData);
+      toast({
+        title: "Horario guardado",
+        description: "El horario del taller ha sido actualizado."
+      });
+    } else {
+      toast({
+        title: "Error",
+        description: await utilService.handleSupabaseError(error),
+        variant: "destructive"
+      });
     }
     
     return { data, error };
