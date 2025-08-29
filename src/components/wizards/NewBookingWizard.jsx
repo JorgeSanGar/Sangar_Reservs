@@ -9,10 +9,17 @@ import WheelOptionsDrawer from '@/components/services/WheelOptionsDrawer';
 
 const NewBookingWizard = ({ isOpen, onClose, initialDate = null }) => {
   const { services, workingHours, bookings, createBooking } = useAppData();
+  const { toast } = useToast();
+  
+  const [step, setStep] = useState(1);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedService, setSelectedService] = useState(null);
+  const [customerData, setCustomerData] = useState({ name: '', email: '', phone: '' });
+  const [visitMode, setVisitMode] = useState('wait');
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [arrivalRecommendation, setArrivalRecommendation] = useState(null);
   const [selectedDate, setSelectedDate] = useState(initialDate || new Date());
   const [estimatedDuration, setEstimatedDuration] = useState(null);
-  const [bookingTime, setBookingTime] = useState(initialTime);
   const [bookingTime, setBookingTime] = useState(null);
   const [wheelConfig, setWheelConfig] = useState(null);
    

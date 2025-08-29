@@ -10,7 +10,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { useAppData } from '@/contexts/AppDataContext';
 import { useAuth } from '@/contexts/SupabaseAuthContext';
 import { inviteService } from '@/lib/supabaseService';
-import { useToast } = from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import WorkingHoursConfig from '@/components/settings/WorkingHoursConfig';
 
 const SettingsView = () => {

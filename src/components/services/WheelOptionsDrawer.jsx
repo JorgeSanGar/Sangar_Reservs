@@ -16,7 +16,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "
 // ───────────────────────────────────────────────────────────────────────────────
 // 1) Esquema & Tipos
 // ───────────────────────────────────────────────────────────────────────────────
-type VehicleType = "car" | "suv"; // puedes ampliar: "truck", "industrial"…
+// type VehicleType = "car" | "suv"; // puedes ampliar: "truck", "industrial"…
 
 const formSchema = z.object({
   pinchazo: z.boolean().default(false),                 // si es pinchazo reemplaza "cambio"
