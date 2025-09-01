@@ -119,6 +119,7 @@ const AuthPage = () => {
           variant: "destructive"
         });
         return;
+        return;
       }
 
       toast({
@@ -213,6 +214,7 @@ const AuthPage = () => {
           description: "Error al unirse al taller",
           variant: "destructive"
         });
+        return;
         return;
         return;
       }
