@@ -14,6 +14,7 @@ const AuthPage = () => {
   const { signIn, signUp } = useAuth();
   const { toast } = useToast();
   
+  const [activeTab, setActiveTab] = useState('login');
   const [loginData, setLoginData] = useState({ email: '', password: '' });
   const [registerData, setRegisterData] = useState({
     directorName: '',
@@ -78,6 +79,15 @@ const AuthPage = () => {
       );
 
       if (authError) {
+        if (authError.code === 'user_already_exists') {
+          setLoginData(prev => ({ ...prev, email: registerData.email }));
+          setActiveTab('login');
+          toast({
+            title: "Cuenta existente",
+            description: "Ya existe una cuenta con este correo. Por favor, inicia sesión.",
+            variant: "destructive"
+          });
+        }
         return;
       }
 
@@ -174,6 +184,15 @@ const AuthPage = () => {
       );
 
       if (authError) {
+        if (authError.code === 'user_already_exists') {
+          setLoginData(prev => ({ ...prev, email: workerData.email }));
+          setActiveTab('login');
+          toast({
+            title: "Cuenta existente",
+            description: "Ya existe una cuenta con este correo. Por favor, inicia sesión.",
+            variant: "destructive"
+          });
+        }
         return;
       }
 
@@ -248,7 +267,7 @@ const AuthPage = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="login" className="w-full">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="login" className="flex items-center gap-2">
                   <Wrench className="w-4 h-4" />
