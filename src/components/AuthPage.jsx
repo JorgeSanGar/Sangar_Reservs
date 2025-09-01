@@ -85,7 +85,6 @@ const AuthPage = () => {
           toast({
             title: "Cuenta existente",
             description: "Ya existe una cuenta con este correo. Por favor, inicia sesión.",
-            variant: "destructive"
           });
         }
         return;
@@ -190,7 +189,6 @@ const AuthPage = () => {
           toast({
             title: "Cuenta existente",
             description: "Ya existe una cuenta con este correo. Por favor, inicia sesión.",
-            variant: "destructive"
           });
         }
         return;

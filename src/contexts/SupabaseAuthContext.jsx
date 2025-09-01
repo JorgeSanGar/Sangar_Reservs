@@ -65,11 +65,14 @@ export const AuthProvider = ({ children }) => {
     const { data, error } = await authService.signUp(email, password, options);
 
     if (error) {
+     // Don't show toast for user_already_exists - let the component handle it
+     if (error.code !== 'user_already_exists') {
       toast({
         variant: "destructive",
         title: "Error de Registro",
         description: await utilService.handleSupabaseError(error),
       });
+     }
     } else {
       toast({
         title: "Registro Exitoso",
