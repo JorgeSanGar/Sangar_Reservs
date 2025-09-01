@@ -113,6 +113,12 @@ const AuthPage = () => {
 
       if (memberError) {
         console.error('Error adding user as manager:', memberError);
+        toast({
+          title: "Error",
+          description: "Error al asociar el usuario con la organización",
+          variant: "destructive"
+        });
+        return;
       }
 
       toast({
@@ -207,6 +213,7 @@ const AuthPage = () => {
           description: "Error al unirse al taller",
           variant: "destructive"
         });
+        return;
         return;
       }
 
