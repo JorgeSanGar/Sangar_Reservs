@@ -119,7 +119,6 @@ const AuthPage = () => {
           variant: "destructive"
         });
         return;
-        return;
       }
 
       toast({
@@ -215,24 +214,8 @@ const AuthPage = () => {
           variant: "destructive"
         });
         return;
-        return;
-        return;
       }
 
-      // 4. Mark invite code as used
-      const { error: useError } = await inviteService.useInviteCode(
-        workerData.inviteCode,
-        authData.user.id
-      );
-
-      if (useError) {
-        console.error('Error marking invite code as used:', useError);
-      }
-
-      toast({
-        title: "¡Bienvenido al equipo!",
-        description: `Te has unido exitosamente a ${inviteData.orgs.name}. Revisa tu correo para confirmar tu cuenta.`
-      });
       
     } catch (error) {
       console.error('Worker join error:', error);
