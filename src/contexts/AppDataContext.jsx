@@ -50,8 +50,13 @@ export const AppDataProvider = ({ children }) => {
     try {
       setLoading(true);
 
+      console.log('Loading user data for user:', user.id);
+
       // Get user's organizations
       const { data: userOrgs, error: orgsError } = await orgService.getUserOrganizations(user.id);
+      
+      console.log('User organizations result:', { userOrgs, orgsError });
+      
       if (orgsError) {
         console.error('Error loading user organizations:', orgsError);
         toast({
@@ -59,17 +64,20 @@ export const AppDataProvider = ({ children }) => {
           description: await utilService.handleSupabaseError(orgsError),
           variant: "destructive"
         });
+        setLoading(false);
         return;
       }
 
       if (!userOrgs || userOrgs.length === 0) {
         // User has no organizations
+        console.log('User has no organizations associated');
         setLoading(false);
         return;
       }
 
       // For now, use the first organization
       const userOrg = userOrgs[0];
+      console.log('Using organization:', userOrg);
       setOrgData(userOrg.orgs);
       setUserRole(userOrg.role);
 
