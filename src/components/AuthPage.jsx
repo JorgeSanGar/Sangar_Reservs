@@ -14,7 +14,6 @@ const AuthPage = () => {
   const { signIn, signUp } = useAuth();
   const { toast } = useToast();
   
-  const [activeTab, setActiveTab] = useState('login');
   const [loginData, setLoginData] = useState({ email: '', password: '' });
   const [registerData, setRegisterData] = useState({
     directorName: '',
@@ -79,14 +78,6 @@ const AuthPage = () => {
       );
 
       if (authError) {
-        if (authError.code === 'user_already_exists') {
-          setLoginData(prev => ({ ...prev, email: registerData.email }));
-          setActiveTab('login');
-          toast({
-            title: "Cuenta existente",
-            description: "Ya existe una cuenta con este correo. Por favor, inicia sesión.",
-          });
-        }
         return;
       }
 
@@ -113,12 +104,6 @@ const AuthPage = () => {
 
       if (memberError) {
         console.error('Error adding user as manager:', memberError);
-        toast({
-          title: "Error",
-          description: "Error al asociar el usuario con la organización",
-          variant: "destructive"
-        });
-        return;
       }
 
       toast({
@@ -189,14 +174,6 @@ const AuthPage = () => {
       );
 
       if (authError) {
-        if (authError.code === 'user_already_exists') {
-          setLoginData(prev => ({ ...prev, email: workerData.email }));
-          setActiveTab('login');
-          toast({
-            title: "Cuenta existente",
-            description: "Ya existe una cuenta con este correo. Por favor, inicia sesión.",
-          });
-        }
         return;
       }
 
@@ -216,6 +193,20 @@ const AuthPage = () => {
         return;
       }
 
+      // 4. Mark invite code as used
+      const { error: useError } = await inviteService.useInviteCode(
+        workerData.inviteCode,
+        authData.user.id
+      );
+
+      if (useError) {
+        console.error('Error marking invite code as used:', useError);
+      }
+
+      toast({
+        title: "¡Bienvenido al equipo!",
+        description: `Te has unido exitosamente a ${inviteData.orgs.name}. Revisa tu correo para confirmar tu cuenta.`
+      });
       
     } catch (error) {
       console.error('Worker join error:', error);
@@ -257,7 +248,7 @@ const AuthPage = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <Tabs defaultValue="login" className="w-full">
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="login" className="flex items-center gap-2">
                   <Wrench className="w-4 h-4" />

@@ -512,9 +512,6 @@ export const utilService = {
   async handleSupabaseError(error) {
     console.error('Supabase Error:', error);
     
-    if (error?.code === 'user_already_exists') {
-      return 'Ya existe una cuenta con este correo. Por favor, inicia sesión.';
-    }
     if (error?.code === 'PGRST116') {
       return 'No se encontraron datos';
     }
